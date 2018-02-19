@@ -16,4 +16,6 @@
     <string name="twoHundred">200</string>
     <string name="errorResponseCode">Error response code:</string>
     <string name="problemRetrivingJson">Problem retrieving JSON results.</string>
+    <string name="poster_of_movies">Poster of Movies</string>
+    <string name="image_of_previous_selected_movie">Image of previous selected movie</string>
 </resources>

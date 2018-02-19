@@ -24,8 +24,8 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
 
     private static final String LOG_TAG = MovieDetails.class.getSimpleName();
 
-    public static final String NUMBER_OF_GRID = "number";
-    public static final String CURRENT_QUERY = "current_query";
+    private static final String NUMBER_OF_GRID = "number";
+    private static final String CURRENT_QUERY = "current_query";
     private int numberOfIncoming;
     private String queryParameter;
     private static final int DB_DETAILS_LOADER = 477;
@@ -38,10 +38,11 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle(R.string.details_screen_title);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -61,7 +62,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         mReleaseDate = findViewById(R.id.textViewReleaseDetail);
         mOverview = findViewById(R.id.textViewOverviewDetail);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -3,7 +3,6 @@ package com.george.mustwatchmovies;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +34,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
 
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = (View) LayoutInflater.from(parent.getContext())
+        View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.grid_list_item, parent, false);
 
         MainViewHolder vh = new MainViewHolder(v);

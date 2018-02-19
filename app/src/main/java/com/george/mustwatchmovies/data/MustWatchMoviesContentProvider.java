@@ -19,10 +19,10 @@ import com.george.mustwatchmovies.R;
 public class MustWatchMoviesContentProvider extends ContentProvider {
 
     //4 cases for 2 tables and 2 single rows in each table
-    public static final int POPULAR_GRID = 100;
-    public static final int POPULAR_GRID_ID = 101;
-    public static final int TOP_RATED_GRID = 200;
-    public static final int TOP_RATED_GRID_ID = 201;
+    private static final int POPULAR_GRID = 100;
+    private static final int POPULAR_GRID_ID = 101;
+    private static final int TOP_RATED_GRID = 200;
+    private static final int TOP_RATED_GRID_ID = 201;
 
     private MustWatchMoviesDBHelper mDbHelper;
 

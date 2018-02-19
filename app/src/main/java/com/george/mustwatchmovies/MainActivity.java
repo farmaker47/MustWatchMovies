@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
     private static final String QUERY_PATH = "path_query";
     private static final String QUERY_INTERNET_BUNDLE = "internet_query";
     private ActionBar ab;
-    public static final String NUMBER_OF_GRID = "number";
-    public static final String CURRENT_QUERY = "current_query";
+    private static final String NUMBER_OF_GRID = "number";
+    private static final String CURRENT_QUERY = "current_query";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         queryStringPath = sharedPreferences.getString(QUERY_PATH, getResources().getString(R.string.popularString));
         Log.d(getString(R.string.defaultTable), tableToQuery);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //we set the name in actionbar so the user gets informed what is he/she watching at that time
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         }
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

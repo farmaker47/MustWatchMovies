@@ -1,0 +1,12 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="imageMainGrid">250dp</dimen>
+    <dimen name="recyclerHeight">260dp</dimen>
+    <dimen name="imageDetailScreen">150dp</dimen>
+    <dimen name="ratingMarginTop">10dp</dimen>
+    <dimen name="releaseMarginTop">10dp</dimen>
+    <dimen name="linearMarginTop">10dp</dimen>
+    <dimen name="titleTextSize">20sp</dimen>
+    <dimen name="textOverviewPadding">7dp</dimen>
+    <dimen name="marginLeftRatingTextView">4dp</dimen>
+</resources>

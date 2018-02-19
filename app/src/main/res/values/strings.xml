@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">MustWatchMovies</string>
+    <string name="action_popular">Popular Movies</string>
+    <string name="action_top_rated">Top Rated Movies</string>
+    <string name="popularString">popular</string>
+    <string name="topRatedString">top_rated</string>
+    <string name="nextImplemented">Will be implemented in stage 2</string>
+    <string name="title_activity_movie_details">MovieDetails</string>
+    <string name="rating">Rating:</string>
+    <string name="details_screen_title">Movie Details</string>
+    <string name="unknownUri">Unknown URI</string>
+    <string name="defaultTable">defaultTable</string>
+    <string name="problemParsingJson">Problem parsing JSON results</string>
+    <string name="get">GET</string>
+    <string name="success">Success</string>
+    <string name="twoHundred">200</string>
+    <string name="errorResponseCode">Error response code:</string>
+    <string name="problemRetrivingJson">Problem retrieving JSON results.</string>
+</resources>

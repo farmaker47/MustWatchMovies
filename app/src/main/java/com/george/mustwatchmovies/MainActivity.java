@@ -34,7 +34,7 @@ import com.george.mustwatchmovies.network.NetworkUtilities;
 import java.io.IOException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements MainGridAdapter.MoviesClickItemListener{
+public class MainActivity extends AppCompatActivity implements MainGridAdapter.MoviesClickItemListener {
 
     private RecyclerView mRecyclerView;
     private MainGridAdapter mGridAdapter;
@@ -72,16 +72,9 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             ab.setTitle(getResources().getString(R.string.action_popular));
         } else if (tableToQuery.equals(MustWatchMoviesContract.MovieTopRated.TABLE_NAME)) {
             ab.setTitle(getResources().getString(R.string.action_top_rated));
+        } else if (tableToQuery.equals(MustWatchMoviesContract.MovieFavorites.TABLE_NAME)) {
+            ab.setTitle(getResources().getString(R.string.action_favorites));
         }
-
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, R.string.nextImplemented,Toast.LENGTH_LONG).show();
-            }
-        });
 
         try {
             dbHelper = new MustWatchMoviesDBHelper(this);
@@ -102,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         //Setting the adapter
-        mGridAdapter = new MainGridAdapter(this,this);
+        mGridAdapter = new MainGridAdapter(this, this);
         mRecyclerView.setAdapter(mGridAdapter);
 
         //Upon creation we check if there is internet connection
@@ -110,16 +103,21 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
-            Bundle queryBundle = new Bundle();
-            //we pass a bundle parameter that we will use to see if popular or top_rated movies has been chosen
-            //also this will be used to build the total url for fetching data
-            queryBundle.putString(QUERY_INTERNET_BUNDLE, queryStringPath);
-            android.support.v4.app.LoaderManager loaderManager = getSupportLoaderManager();
-            Loader<String> internetLoader = loaderManager.getLoader(INTERNET_LOADER);
-            if (internetLoader == null) {
-                loaderManager.initLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
+            if (queryStringPath.equals(getResources().getString(R.string.popularString)) || queryStringPath.equals(getResources().getString(R.string.topRatedString))) {
+                Bundle queryBundle = new Bundle();
+                //we pass a bundle parameter that we will use to see if popular or top_rated movies has been chosen
+                //also this will be used to build the total url for fetching data
+                queryBundle.putString(QUERY_INTERNET_BUNDLE, queryStringPath);
+                android.support.v4.app.LoaderManager loaderManager = getSupportLoaderManager();
+                Loader<String> internetLoader = loaderManager.getLoader(INTERNET_LOADER);
+                if (internetLoader == null) {
+                    loaderManager.initLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
+                } else {
+                    loaderManager.restartLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
+                }
             } else {
-                loaderManager.restartLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
+                //if you have internet but you have selected favorites
+                beginLoaderToDisplayData();
             }
         } else {
             //if there is no internet connection use this function to display previous saved data
@@ -154,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
                     URL urlToFetchData = NetworkUtilities.buildUrl(queryPath);
 
                     try {
-                        jsonResults = NetworkUtilities.makeHttpRequest(urlToFetchData,MainActivity.this);
+                        jsonResults = NetworkUtilities.makeHttpRequest(urlToFetchData, MainActivity.this);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -217,6 +215,8 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
                 cLoader = new CursorLoader(MainActivity.this, MustWatchMoviesContract.MoviePopular.CONTENT_URI_POPULAR, null, null, null, null);
             } else if (queryStringPath.equals(getResources().getString(R.string.topRatedString))) {
                 cLoader = new CursorLoader(MainActivity.this, MustWatchMoviesContract.MovieTopRated.CONTENT_URI_TOP_RATED, null, null, null, null);
+            } else if (queryStringPath.equals(getResources().getString(R.string.favoritesString))) {
+                cLoader = new CursorLoader(MainActivity.this, MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, null, null, null, null);
             }
             return cLoader;
         }
@@ -322,25 +322,59 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             return true;
         }
 
+        if (id == R.id.action_favorites) {
+
+            //I destroy the loaders here because I had a delay in refreshing the UI
+            //With this option we initialize the loader immediately
+            getSupportLoaderManager().destroyLoader(INTERNET_LOADER);
+            getSupportLoaderManager().destroyLoader(DB_LOADER);
+
+            //Upon click we save the table name and query parameter in sharedpreferences
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(TABLE_TO_QUERY, MustWatchMoviesContract.MovieFavorites.TABLE_NAME);
+            editor.putString(QUERY_PATH, getResources().getString(R.string.favoritesString));
+            editor.apply();
+
+            //we refresh the string here so the loaders know exactly what table to query and from what adress to fetch data
+            queryStringPath = getResources().getString(R.string.favoritesString);
+            //refresh the title
+            ab.setTitle(getResources().getString(R.string.action_favorites));
+
+            onSettingsClick(queryStringPath);
+
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
     //we check if we have internet so always to display data either by fetching from internet or by quering the already saved tables
     private void onSettingsClick(String string) {
+
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
-            Bundle queryBundle = new Bundle();
-            queryBundle.putString(QUERY_INTERNET_BUNDLE, string);
-            LoaderManager loaderManager = getSupportLoaderManager();
-            Loader<String> internetLoader = loaderManager.getLoader(INTERNET_LOADER);
-            if (internetLoader == null) {
-                loaderManager.initLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
+            if (queryStringPath.equals(getResources().getString(R.string.popularString)) || queryStringPath.equals(getResources().getString(R.string.topRatedString))) {
+                Bundle queryBundle = new Bundle();
+                //we pass a bundle parameter that we will use to see if popular or top_rated movies has been chosen
+                //also this will be used to build the total url for fetching data
+                queryBundle.putString(QUERY_INTERNET_BUNDLE, string);
+                android.support.v4.app.LoaderManager loaderManager = getSupportLoaderManager();
+                Loader<String> internetLoader = loaderManager.getLoader(INTERNET_LOADER);
+                if (internetLoader == null) {
+                    loaderManager.initLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
+                } else {
+                    loaderManager.restartLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
+                }
             } else {
-                loaderManager.restartLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
+                //if you have internet but you have selected favorites
+                beginLoaderToDisplayData();
             }
         } else {
+            //if there is no internet connection use this function to display previous saved data
+            //so the user see a movie and dont go outside for a walk :)
             beginLoaderToDisplayData();
         }
     }
@@ -350,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         Intent intent = new Intent(MainActivity.this, MovieDetails.class);
         //passing the position and the query parameter
         intent.putExtra(NUMBER_OF_GRID, itemIndex);
-        intent.putExtra(CURRENT_QUERY,queryStringPath);
+        intent.putExtra(CURRENT_QUERY, queryStringPath);
         startActivity(intent);
     }
 }

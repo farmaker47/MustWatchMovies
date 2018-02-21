@@ -1,10 +1,12 @@
 package com.george.mustwatchmovies.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -23,6 +25,8 @@ public class MustWatchMoviesContentProvider extends ContentProvider {
     private static final int POPULAR_GRID_ID = 101;
     private static final int TOP_RATED_GRID = 200;
     private static final int TOP_RATED_GRID_ID = 201;
+    private static final int FAVORITES_GRID = 300;
+    private static final int FAVORITES_GRID_ID = 301;
 
     private MustWatchMoviesDBHelper mDbHelper;
 
@@ -36,6 +40,8 @@ public class MustWatchMoviesContentProvider extends ContentProvider {
         uriMatcher.addURI(MustWatchMoviesContract.AUTHORITY, MustWatchMoviesContract.PATH_TABLE_POPULAR + "/#", POPULAR_GRID_ID);
         uriMatcher.addURI(MustWatchMoviesContract.AUTHORITY, MustWatchMoviesContract.PATH_TABLE_TOP_RATED, TOP_RATED_GRID);
         uriMatcher.addURI(MustWatchMoviesContract.AUTHORITY, MustWatchMoviesContract.PATH_TABLE_TOP_RATED + "/#", TOP_RATED_GRID_ID);
+        uriMatcher.addURI(MustWatchMoviesContract.AUTHORITY, MustWatchMoviesContract.PATH_TABLE_FAVORITES, FAVORITES_GRID);
+        uriMatcher.addURI(MustWatchMoviesContract.AUTHORITY, MustWatchMoviesContract.PATH_TABLE_FAVORITES + "/#", FAVORITES_GRID_ID);
 
         return uriMatcher;
     }
@@ -122,6 +128,9 @@ public class MustWatchMoviesContentProvider extends ContentProvider {
             case TOP_RATED_GRID:
                 retCursor = sqLiteDatabase.query(MustWatchMoviesContract.MovieTopRated.TABLE_NAME, strings, s, strings1, null, null, s1);
                 break;
+            case FAVORITES_GRID:
+                retCursor = sqLiteDatabase.query(MustWatchMoviesContract.MovieFavorites.TABLE_NAME, strings, s, strings1, null, null, s1);
+                break;
             default:
                 throw new UnsupportedOperationException(getContext().getString(R.string.unknownUri) + uri);
 
@@ -141,7 +150,29 @@ public class MustWatchMoviesContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
-        return null;
+        final SQLiteDatabase mDb = mDbHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+
+        Uri returnUri;
+
+        switch (match) {
+
+            case FAVORITES_GRID:
+                long id = mDb.insert(MustWatchMoviesContract.MovieFavorites.TABLE_NAME, null, contentValues);
+                if (id > 0) {
+                    returnUri = ContentUris.withAppendedId(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, id);
+
+                } else {
+                    throw new SQLException(getContext().getResources().getString(R.string.failedInsertRow) + uri);
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException(getContext().getString(R.string.unknownUri) + uri);
+
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return returnUri;
     }
 
     @Override
@@ -159,6 +190,12 @@ public class MustWatchMoviesContentProvider extends ContentProvider {
                 itemsDeleted = mDb.delete(MustWatchMoviesContract.MovieTopRated.TABLE_NAME, null, null);
                 break;
 
+            case FAVORITES_GRID_ID:
+                // Get the task ID from the URI path
+                String id = uri.getPathSegments().get(1);
+                // Use selections/selectionArgs to filter for this ID
+                itemsDeleted = mDb.delete(MustWatchMoviesContract.MovieFavorites.TABLE_NAME, "_id=?", new String[]{id});
+                break;
             default:
                 throw new UnsupportedOperationException(getContext().getString(R.string.unknownUri) + uri);
 

@@ -1,7 +1,9 @@
 package com.george.mustwatchmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
@@ -27,12 +29,16 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     private static final String NUMBER_OF_GRID = "number";
     private static final String CURRENT_QUERY = "current_query";
     private int numberOfIncoming;
-    private String queryParameter;
+    private int columnIDIndex = -1;
+    private String queryParameter,stringForDeletingRow;
+    private String pathFromDB, titleOfMovie, ratingOfMovie, releaseOfMovie, overviewOfMovie, specialIdOfMovie;
     private static final int DB_DETAILS_LOADER = 477;
+    private static final int CHECK_SPECIAL_ID_LOADER = 77;
 
     private ImageView mImage;
-    private TextView mTitle, mRating, mReleaseDate, mOverview;
+    private TextView mTitle, mRating, mReleaseDate, mOverview, mDummy;
     private ActionBar actionBar;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +67,63 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         mRating = findViewById(R.id.textViewRatingDetail);
         mReleaseDate = findViewById(R.id.textViewReleaseDetail);
         mOverview = findViewById(R.id.textViewOverviewDetail);
+        mDummy = findViewById(R.id.textViewDummy);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MovieDetails.this, R.string.nextImplemented, Toast.LENGTH_LONG).show();
-
+                /*Toast.makeText(MovieDetails.this, R.string.nextImplemented, Toast.LENGTH_LONG).show();*/
+                favoritizeMovie();
             }
         });
+    }
+
+    private void favoritizeMovie() {
+        if (fab.getTag() != null) {
+            int resourceID = (int) fab.getTag();
+
+            switch (resourceID) {
+
+                case R.drawable.heart:
+                    fab.setImageResource(R.drawable.heart_out);
+                    fab.setTag(R.drawable.heart_out);
+                    //method to erase movie from favorites
+                    deleteInfoFromDB();
+                    Toast.makeText(MovieDetails.this, R.string.movieDeletedFavorites, Toast.LENGTH_LONG).show();
+                    break;
+                case R.drawable.heart_out:
+                    fab.setImageResource(R.drawable.heart);
+                    fab.setTag(R.drawable.heart);
+                    //method to add movie in favorites
+                    insertInfoToDB();
+                    Toast.makeText(MovieDetails.this, R.string.movieIntoFavorites, Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    Log.e("NOTHING", "In");
+                    break;
+
+            }
+
+        }
+    }
+
+    private void deleteInfoFromDB() {
+        getContentResolver().delete(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES.buildUpon().appendPath(stringForDeletingRow).build(),null,null);
+    }
+
+    private void insertInfoToDB() {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_TITLE, titleOfMovie);
+        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_RELEASE_DATE, releaseOfMovie);
+        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_POSTER_URL, pathFromDB);
+        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_SPECIAL_ID,specialIdOfMovie);
+        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_OVERVIEW, overviewOfMovie);
+        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_VOTE_AVERAGE, ratingOfMovie);
+
+        Uri uri = getContentResolver().insert(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES,contentValues);
+        Log.e("DONE", "In");
+
     }
 
     @Override
@@ -94,6 +148,8 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             cLoader = new CursorLoader(MovieDetails.this, MustWatchMoviesContract.MoviePopular.CONTENT_URI_POPULAR, null, null, null, null);
         } else if (queryParameter.equals(getResources().getString(R.string.topRatedString))) {
             cLoader = new CursorLoader(MovieDetails.this, MustWatchMoviesContract.MovieTopRated.CONTENT_URI_TOP_RATED, null, null, null, null);
+        } else if (queryParameter.equals(getResources().getString(R.string.favoritesString))) {
+            cLoader = new CursorLoader(MovieDetails.this, MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, null, null, null, null);
         }
         return cLoader;
     }
@@ -106,17 +162,33 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         data.moveToPosition(numberOfIncoming);
 
         //it doesnt matter if table is popular or top rated because we have inserted same names for the columns...so we will not make an if/else statement
-        mTitle.setText(data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_TITLE)));
-        mRating.setText(data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_VOTE_AVERAGE)));
-        mReleaseDate.setText(data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_RELEASE_DATE)));
-        mOverview.setText(data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_OVERVIEW)));
+        titleOfMovie = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_TITLE));
+        mTitle.setText(titleOfMovie);
 
-        String pathFromDB = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_POSTER_URL));
+        ratingOfMovie = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_VOTE_AVERAGE));
+        mRating.setText(ratingOfMovie);
+
+        releaseOfMovie = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_RELEASE_DATE));
+        mReleaseDate.setText(releaseOfMovie);
+
+        overviewOfMovie = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_OVERVIEW));
+        mOverview.setText(overviewOfMovie);
+
+        specialIdOfMovie = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID));
+        mDummy.setText(specialIdOfMovie);
+
+        pathFromDB = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_POSTER_URL));
         String url = NetworkUtilities.imageUrl(pathFromDB);
         Picasso.with(this)
                 .load(url)
                 .into(mImage);
         data.close();
+
+        //initializing the loader to check if this movie is already in favorites DB
+        if (queryParameter.equals(getResources().getString(R.string.popularString)) || queryParameter.equals(getResources().getString(R.string.topRatedString))
+                || queryParameter.equals(getResources().getString(R.string.favoritesString))) {
+            getSupportLoaderManager().initLoader(CHECK_SPECIAL_ID_LOADER, null, mSpecialIdLoader);
+        }
 
     }
 
@@ -124,4 +196,43 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+    private LoaderManager.LoaderCallbacks mSpecialIdLoader = new LoaderManager.LoaderCallbacks() {
+        @Override
+        public Loader onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(MovieDetails.this, MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES,
+                    null, null, null, null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader loader, Object data) {
+            Cursor cursor = (Cursor) data;
+            cursor.moveToFirst();
+
+            //trying to find the specific ID index depend on the value at a specific column
+            while (!cursor.isAfterLast()) {
+                if (cursor.getString(cursor.getColumnIndex(MustWatchMoviesContract.MovieFavorites.COLUMN_SPECIAL_ID)).equals(specialIdOfMovie)) {
+                    columnIDIndex = cursor.getInt(cursor.getColumnIndex(MustWatchMoviesContract.MovieFavorites._ID));
+                }
+                cursor.moveToNext();
+            }
+            Log.e("Column ID:", String.valueOf(columnIDIndex));
+
+            if (columnIDIndex == -1) {
+                fab.setImageResource(R.drawable.heart_out);
+                fab.setTag(R.drawable.heart_out);
+            } else {
+                fab.setImageResource(R.drawable.heart);
+                fab.setTag(R.drawable.heart);
+            }
+
+            stringForDeletingRow = String.valueOf(columnIDIndex);
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader loader) {
+
+        }
+    };
 }

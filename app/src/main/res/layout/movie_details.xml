@@ -14,16 +14,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/imageDetailScreen"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/imageDetailScreen"
-                android:contentDescription="@string/image_of_previous_selected_movie" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/imageDetailScreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/imageDetailScreen"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/image_of_previous_selected_movie" />
+
+            </LinearLayout>
+
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_weight="2">
 
                 <TextView
                     android:id="@+id/textViewTitleDetail"
@@ -63,6 +72,11 @@
 
         <TextView
             android:id="@+id/textViewOverviewDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/textOverviewPadding" />
+        <TextView
+            android:id="@+id/textViewDummy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/textOverviewPadding" />

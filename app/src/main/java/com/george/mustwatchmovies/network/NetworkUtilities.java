@@ -145,10 +145,12 @@ public class NetworkUtilities {
                 String imagePath;
                 String overview;
                 String rating;
+                String specialId;
 
                 //we use optString in case there is no input
                 JSONObject movieObject = movieResultsArray.getJSONObject(i);
                 title = movieObject.optString("title");
+                specialId = movieObject.optString("id");
                 releaseDate = movieObject.optString("release_date");
                 imagePath = movieObject.optString("poster_path");
                 overview = movieObject.optString("overview");
@@ -159,6 +161,7 @@ public class NetworkUtilities {
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_TITLE, title);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_RELEASE_DATE, releaseDate);
+                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID,specialId);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_POSTER_URL, imagePath);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_OVERVIEW, overview);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_VOTE_AVERAGE, rating);
@@ -170,6 +173,7 @@ public class NetworkUtilities {
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_TITLE, title);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_RELEASE_DATE, releaseDate);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_POSTER_URL, imagePath);
+                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_SPECIAL_ID,specialId);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_OVERVIEW, overview);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_VOTE_AVERAGE, rating);
 

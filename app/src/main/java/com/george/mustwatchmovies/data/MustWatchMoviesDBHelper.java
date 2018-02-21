@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MustWatchMoviesDBHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "allmovies.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     public MustWatchMoviesDBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -24,6 +24,7 @@ public class MustWatchMoviesDBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE IF NOT EXISTS " + MustWatchMoviesContract.MoviePopular.TABLE_NAME + "(" +
                         MustWatchMoviesContract.MoviePopular._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         MustWatchMoviesContract.MoviePopular.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
+                        MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID + " TEXT NOT NULL, " +
                         MustWatchMoviesContract.MoviePopular.COLUMN_POSTER_URL + " TEXT NOT NULL, " +
                         MustWatchMoviesContract.MoviePopular.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
                         MustWatchMoviesContract.MoviePopular.COLUMN_TITLE + " TEXT NOT NULL, " +
@@ -34,6 +35,18 @@ public class MustWatchMoviesDBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE IF NOT EXISTS " + MustWatchMoviesContract.MovieTopRated.TABLE_NAME + "(" +
                         MustWatchMoviesContract.MovieTopRated._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         MustWatchMoviesContract.MovieTopRated.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
+                        MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID + " TEXT NOT NULL, " +
+                        MustWatchMoviesContract.MovieTopRated.COLUMN_POSTER_URL + " TEXT NOT NULL, " +
+                        MustWatchMoviesContract.MovieTopRated.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                        MustWatchMoviesContract.MovieTopRated.COLUMN_TITLE + " TEXT NOT NULL, " +
+                        MustWatchMoviesContract.MovieTopRated.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL " +
+                        ");";
+
+        String DATABASE_CREATE_FAVORITES =
+                "CREATE TABLE IF NOT EXISTS " + MustWatchMoviesContract.MovieFavorites.TABLE_NAME + "(" +
+                        MustWatchMoviesContract.MovieTopRated._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        MustWatchMoviesContract.MovieTopRated.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
+                        MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID + " TEXT NOT NULL, " +
                         MustWatchMoviesContract.MovieTopRated.COLUMN_POSTER_URL + " TEXT NOT NULL, " +
                         MustWatchMoviesContract.MovieTopRated.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
                         MustWatchMoviesContract.MovieTopRated.COLUMN_TITLE + " TEXT NOT NULL, " +
@@ -42,6 +55,7 @@ public class MustWatchMoviesDBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(DATABASE_CREATE_POPULAR);
         sqLiteDatabase.execSQL(DATABASE_CREATE_TOP_RATED);
+        sqLiteDatabase.execSQL(DATABASE_CREATE_FAVORITES);
 
     }
 
@@ -49,6 +63,7 @@ public class MustWatchMoviesDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MustWatchMoviesContract.MoviePopular.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MustWatchMoviesContract.MovieTopRated.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MustWatchMoviesContract.MovieFavorites.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

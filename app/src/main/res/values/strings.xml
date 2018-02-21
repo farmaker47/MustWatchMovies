@@ -3,6 +3,7 @@
     <string name="action_popular">Popular Movies</string>
     <string name="action_top_rated">Top Rated Movies</string>
     <string name="popularString">popular</string>
+    <string name="favoritesString">favorite</string>
     <string name="topRatedString">top_rated</string>
     <string name="nextImplemented">Will be implemented in stage 2</string>
     <string name="title_activity_movie_details">MovieDetails</string>
@@ -18,4 +19,8 @@
     <string name="problemRetrivingJson">Problem retrieving JSON results.</string>
     <string name="poster_of_movies">Poster of Movies</string>
     <string name="image_of_previous_selected_movie">Image of previous selected movie</string>
+    <string name="action_favorites">Favorite Movies</string>
+    <string name="failedInsertRow">Failed to insert row in</string>
+    <string name="movieDeletedFavorites">Movie deleted from Favorites!</string>
+    <string name="movieIntoFavorites">Movie inserted into Favorites</string>
 </resources>

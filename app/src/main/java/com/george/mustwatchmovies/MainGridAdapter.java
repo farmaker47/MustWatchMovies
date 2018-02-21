@@ -3,6 +3,7 @@ package com.george.mustwatchmovies;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
         //transform to url
         String combinedUrl = NetworkUtilities.imageUrl(pathFromTable);
         //load with Picasso because with Glide I had rotation problems
+        Log.e("image",combinedUrl);
         Picasso.with(mContext)
                 .load(combinedUrl)
                 .into((holder.image));

@@ -80,6 +80,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/textOverviewPadding" />
+        <TextView
+            android:id="@+id/textViewReviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/textOverviewPadding" />
     </LinearLayout>
 
 </ScrollView>

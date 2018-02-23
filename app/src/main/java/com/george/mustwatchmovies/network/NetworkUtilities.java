@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.george.mustwatchmovies.MovieReview;
 import com.george.mustwatchmovies.R;
 import com.george.mustwatchmovies.data.MustWatchMoviesContract;
 
@@ -20,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 /**
  * Created by farmaker1 on 17/02/2018.
@@ -38,6 +40,8 @@ public class NetworkUtilities {
     private static final String IMAGE_POSTER_URL =
             "https://image.tmdb.org/t/p/";
     private static final String IMAGE_SIZE = "w342";
+    private static final String REVIEWS_PARAMETER = "reviews";
+    private static final String VIDEOS_PARAMETER = "videos";
 
     //here we combine the poster path with the base url so the Picasso library to load the image inside imageview
     public static String imageUrl(String string) {
@@ -45,11 +49,47 @@ public class NetworkUtilities {
         return urlString;
     }
 
-    //here we combine different pieces of information to create the whole url from which we will retrrieve json results
+    //here we combine different pieces of information to create the whole url from which we will retrieve json results
     //we appendPath string where we insert the popular or top_rated attribute
     public static URL buildUrl(String string) {
         Uri uriToBuild = Uri.parse(MOVIE_BASE_URL).buildUpon()
                 .appendPath(string)
+                .appendQueryParameter(KEY, API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(uriToBuild.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    //we combine different piece of information to build Url for reviews
+    public static URL buildUrlForReviews(String stringId){
+
+        Uri uriToBuild = Uri.parse(MOVIE_BASE_URL).buildUpon()
+                .appendPath(stringId)
+                .appendPath(REVIEWS_PARAMETER)
+                .appendQueryParameter(KEY, API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(uriToBuild.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    //we combine different piece of information to build Url for reviews
+    public static URL buildUrlForVideos(String stringId){
+
+        Uri uriToBuild = Uri.parse(MOVIE_BASE_URL).buildUpon()
+                .appendPath(stringId)
+                .appendPath(VIDEOS_PARAMETER)
                 .appendQueryParameter(KEY, API_KEY)
                 .build();
 
@@ -161,7 +201,7 @@ public class NetworkUtilities {
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_TITLE, title);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_RELEASE_DATE, releaseDate);
-                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID,specialId);
+                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID, specialId);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_POSTER_URL, imagePath);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_OVERVIEW, overview);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_VOTE_AVERAGE, rating);
@@ -173,7 +213,7 @@ public class NetworkUtilities {
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_TITLE, title);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_RELEASE_DATE, releaseDate);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_POSTER_URL, imagePath);
-                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_SPECIAL_ID,specialId);
+                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_SPECIAL_ID, specialId);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_OVERVIEW, overview);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_VOTE_AVERAGE, rating);
 
@@ -187,4 +227,75 @@ public class NetworkUtilities {
         return moviesContentValues;
     }
 
+    public static ArrayList<String> mArrayListVideos(String JsonData, Context context) {
+
+        if (JsonData == null) {
+            return null;
+        }
+
+        ArrayList<String> mArrayV = new ArrayList<>();
+        String video = "";
+        try {
+            JSONObject root = new JSONObject(JsonData);
+            if (root.has("results")) {
+                JSONArray movieVideosArray = root.getJSONArray("results");
+                if (movieVideosArray.length() > 0){
+                    for (int j = 0; j < movieVideosArray.length(); j++) {
+                        JSONObject movieVideoObject = movieVideosArray.getJSONObject(j);
+                        video = movieVideoObject.optString("key");
+
+                        mArrayV.add(video);
+
+                        Log.e("VideoKey", video);
+                    }
+
+                }
+            }
+
+
+        } catch (JSONException e) {
+            Log.d(LOG_TAG, context.getString(R.string.problemParsingJson), e);
+        }
+
+        return mArrayV;
+    }
+
+    public static ArrayList<MovieReview> mArrayListReviews(String JsonData, Context context) {
+
+        if (JsonData == null) {
+            return null;
+        }
+
+        ArrayList<MovieReview> mArrayR = new ArrayList<>();
+        String review = "";
+        String author = "";
+        MovieReview movieReview;
+        try {
+            JSONObject root = new JSONObject(JsonData);
+            if (root.has("results")) {
+                JSONArray movieReviewsArray = root.getJSONArray("results");
+                if (movieReviewsArray.length() > 0){
+                    for (int j = 0; j < movieReviewsArray.length(); j++) {
+                        JSONObject movieReviewObject = movieReviewsArray.getJSONObject(j);
+                        review = movieReviewObject.optString("content");
+                        author = movieReviewObject.optString("author");
+
+                        movieReview = new MovieReview(author,review);
+
+                        mArrayR.add(movieReview);
+
+                        Log.e("ReviewContent", review);
+
+                    }
+                    Log.e("sizeOfArrayInUtilities",String.valueOf(mArrayR.size()));
+                }
+            }
+
+
+        } catch (JSONException e) {
+            Log.d(LOG_TAG, context.getString(R.string.problemParsingJson), e);
+        }
+
+        return mArrayR;
+    }
 }

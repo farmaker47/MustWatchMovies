@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
@@ -22,6 +23,10 @@ import com.george.mustwatchmovies.data.MustWatchMoviesContract;
 import com.george.mustwatchmovies.network.NetworkUtilities;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+
 public class MovieDetails extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = MovieDetails.class.getSimpleName();
@@ -30,13 +35,15 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     private static final String CURRENT_QUERY = "current_query";
     private int numberOfIncoming;
     private int columnIDIndex = -1;
-    private String queryParameter,stringForDeletingRow;
+    private String queryParameter, stringForDeletingRow, jsonResultsReviews, jsonResultsVideos,totalInfo;
     private String pathFromDB, titleOfMovie, ratingOfMovie, releaseOfMovie, overviewOfMovie, specialIdOfMovie;
     private static final int DB_DETAILS_LOADER = 477;
     private static final int CHECK_SPECIAL_ID_LOADER = 77;
+    private static final int LOADER_FOR_REVIEWS = 74;
+    private static final int LOADER_FOR_VIDEOS = 744;
 
     private ImageView mImage;
-    private TextView mTitle, mRating, mReleaseDate, mOverview, mDummy;
+    private TextView mTitle, mRating, mReleaseDate, mOverview, mDummy, mReviews;
     private ActionBar actionBar;
     private FloatingActionButton fab;
 
@@ -68,6 +75,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         mReleaseDate = findViewById(R.id.textViewReleaseDetail);
         mOverview = findViewById(R.id.textViewOverviewDetail);
         mDummy = findViewById(R.id.textViewDummy);
+        mReviews = findViewById(R.id.textViewReviews);
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +117,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void deleteInfoFromDB() {
-        getContentResolver().delete(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES.buildUpon().appendPath(stringForDeletingRow).build(),null,null);
+        getContentResolver().delete(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES.buildUpon().appendPath(stringForDeletingRow).build(), null, null);
     }
 
     private void insertInfoToDB() {
@@ -117,11 +125,11 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_TITLE, titleOfMovie);
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_RELEASE_DATE, releaseOfMovie);
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_POSTER_URL, pathFromDB);
-        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_SPECIAL_ID,specialIdOfMovie);
+        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_SPECIAL_ID, specialIdOfMovie);
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_OVERVIEW, overviewOfMovie);
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_VOTE_AVERAGE, ratingOfMovie);
 
-        Uri uri = getContentResolver().insert(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES,contentValues);
+        Uri uri = getContentResolver().insert(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, contentValues);
         Log.e("DONE", "In");
 
     }
@@ -130,6 +138,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     protected void onPause() {
         super.onPause();
         getSupportLoaderManager().destroyLoader(DB_DETAILS_LOADER);
+        //???? destroy other Loaders?
     }
 
     @Override
@@ -187,7 +196,12 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         //initializing the loader to check if this movie is already in favorites DB
         if (queryParameter.equals(getResources().getString(R.string.popularString)) || queryParameter.equals(getResources().getString(R.string.topRatedString))
                 || queryParameter.equals(getResources().getString(R.string.favoritesString))) {
+            //initialize loader to refresh fab button
             getSupportLoaderManager().initLoader(CHECK_SPECIAL_ID_LOADER, null, mSpecialIdLoader);
+            //initialize loader to fetch reviews and trailers
+            getSupportLoaderManager().initLoader(LOADER_FOR_REVIEWS, null, mLoaderForReviews);
+            getSupportLoaderManager().initLoader(LOADER_FOR_VIDEOS, null, mLoaderForVideos);
+
         }
 
     }
@@ -197,6 +211,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    //loader to check if movie is already in favorites
     private LoaderManager.LoaderCallbacks mSpecialIdLoader = new LoaderManager.LoaderCallbacks() {
         @Override
         public Loader onCreateLoader(int id, Bundle args) {
@@ -227,6 +242,101 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             }
 
             stringForDeletingRow = String.valueOf(columnIDIndex);
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader loader) {
+
+        }
+    };
+
+    private LoaderManager.LoaderCallbacks mLoaderForReviews = new LoaderManager.LoaderCallbacks() {
+        @Override
+        public Loader onCreateLoader(int id, Bundle args) {
+            return new AsyncTaskLoader<ArrayList>(MovieDetails.this) {
+
+                @Override
+                protected void onStartLoading() {
+                    forceLoad();
+                }
+
+                @Override
+                public ArrayList loadInBackground() {
+
+                    //reviews data
+                    URL urlToFetchDataForReviews = NetworkUtilities.buildUrlForReviews(specialIdOfMovie);
+
+                    try {
+                        jsonResultsReviews = NetworkUtilities.makeHttpRequest(urlToFetchDataForReviews, MovieDetails.this);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    ArrayList<MovieReview> mArrayReviews = null;
+                    try {
+                        mArrayReviews = NetworkUtilities.mArrayListReviews(jsonResultsReviews, MovieDetails.this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    ////video data
+                    URL urlToFetchDataForVideos = NetworkUtilities.buildUrlForVideos(specialIdOfMovie);
+
+                    try {
+                        jsonResultsVideos = NetworkUtilities.makeHttpRequest(urlToFetchDataForVideos, MovieDetails.this);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    ArrayList<String> mArrayVideos = null;
+                    try {
+                        mArrayVideos = NetworkUtilities.mArrayListVideos(jsonResultsVideos, MovieDetails.this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return mArrayReviews;
+                }
+            };
+        }
+
+        @Override
+        public void onLoadFinished(Loader loader, Object data) {
+
+            ArrayList<MovieReview> arrayList = (ArrayList<MovieReview>) data;
+            StringBuilder sb = new StringBuilder();
+
+
+            for (int j = 0; j < arrayList.size(); j++) {
+
+                Log.e("sizeOfList :",String.valueOf(arrayList.size()));
+                MovieReview mMovieReview = arrayList.get(j);
+
+                String review = mMovieReview.getReview();
+                String author = mMovieReview.getAuthor();
+
+                String total = author +":"+ review +"\n";
+
+                mReviews.append(total);
+
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader loader) {
+
+        }
+    };
+
+    private LoaderManager.LoaderCallbacks mLoaderForVideos = new LoaderManager.LoaderCallbacks() {
+        @Override
+        public Loader onCreateLoader(int id, Bundle args) {
+            return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader loader, Object data) {
 
         }
 

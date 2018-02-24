@@ -22,6 +22,7 @@ public class MustWatchMoviesContract {
         public static final String TABLE_NAME = "moviesPopularTable";
 
         public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_IMAGEBACKGROUND = "image_back";
         public static final String COLUMN_SPECIAL_ID = "special_id";
         public static final String COLUMN_POSTER_URL = "poster_url";
         public static final String COLUMN_OVERVIEW = "overview";
@@ -37,6 +38,7 @@ public class MustWatchMoviesContract {
         public static final String TABLE_NAME = "moviesTopRatedTable";
 
         public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_IMAGEBACKGROUND = "image_back";
         public static final String COLUMN_SPECIAL_ID = "special_id";
         public static final String COLUMN_POSTER_URL = "poster_url";
         public static final String COLUMN_OVERVIEW = "overview";
@@ -53,6 +55,7 @@ public class MustWatchMoviesContract {
 
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_SPECIAL_ID = "special_id";
+        public static final String COLUMN_IMAGEBACKGROUND = "image_back";
         public static final String COLUMN_POSTER_URL = "poster_url";
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";

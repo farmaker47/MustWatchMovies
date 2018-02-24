@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -24,13 +23,14 @@ import android.widget.Toast;
 
 import com.george.mustwatchmovies.data.MustWatchMoviesContract;
 import com.george.mustwatchmovies.network.NetworkUtilities;
+import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MovieDetails extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,VideoRecyclerViewAdapter.VideosClickItemListener {
+public class MovieDetails extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, VideoRecyclerViewAdapter.VideosClickItemListener {
 
     private static final String LOG_TAG = MovieDetails.class.getSimpleName();
 
@@ -39,15 +39,16 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     private int numberOfIncoming;
     private int columnIDIndex = -1;
     private String queryParameter, stringForDeletingRow, jsonResultsReviews, jsonResultsVideos, totalInfo;
-    private String pathFromDB, titleOfMovie, ratingOfMovie, releaseOfMovie, overviewOfMovie, specialIdOfMovie;
+    private String pathFromDB, titleOfMovie, ratingOfMovie, releaseOfMovie, overviewOfMovie, specialIdOfMovie, stringForExpandable;
     private static final int DB_DETAILS_LOADER = 477;
     private static final int CHECK_SPECIAL_ID_LOADER = 77;
     private static final int LOADER_FOR_REVIEWS = 74;
     private static final int LOADER_FOR_VIDEOS = 744;
     private static final String YOUTUBE_BASE_URL_VIDEO = "https://www.youtube.com/watch?v=";
 
-    private ImageView mImage;
+    private ImageView mImage, mImageForCollapse;
     private TextView mTitle, mRating, mReleaseDate, mOverview, mDummy, mReviews;
+    private ExpandableTextView expText;
     private ActionBar actionBar;
     private FloatingActionButton fab;
     private RecyclerView mRecyclerDetailScreen;
@@ -82,15 +83,17 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         mReleaseDate = findViewById(R.id.textViewReleaseDetail);
         mOverview = findViewById(R.id.textViewOverviewDetail);
         mDummy = findViewById(R.id.textViewDummy);
-        mReviews = findViewById(R.id.textViewReviews);
+        mReviews = findViewById(R.id.expandable_text);
+        mImageForCollapse = findViewById(R.id.expand_collapse);
         mRecyclerDetailScreen = findViewById(R.id.recyclerDetailScreen);
+        expText = findViewById(R.id.expand_text_view);
 
         mRecyclerDetailScreen.setHasFixedSize(true);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerDetailScreen.setLayoutManager(layoutManager);
 
-        mVideoAdapter = new VideoRecyclerViewAdapter(this,this);
+        mVideoAdapter = new VideoRecyclerViewAdapter(this, this);
         mRecyclerDetailScreen.setAdapter(mVideoAdapter);
 
         fab = findViewById(R.id.fab);
@@ -101,6 +104,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                 favoritizeMovie();
             }
         });
+        stringForExpandable="";
     }
 
     private void favoritizeMovie() {
@@ -154,6 +158,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onPause() {
         super.onPause();
+        stringForExpandable="";
         getSupportLoaderManager().destroyLoader(DB_DETAILS_LOADER);
         //???? destroy other Loaders?
     }
@@ -317,12 +322,13 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                     String review = mMovieReview.getReview();
                     String author = mMovieReview.getAuthor();
 
-                    String total = "▶"+" " +author + ": " + " " + "“" +  review + "”" + "\n\n";
+                    String total = "▶" + " " + author + ": " + " " + "“" + review + "”" + "\n\n";
 
-                    mReviews.append(total);
+                    stringForExpandable += total;
                 }
+                expText.setText(stringForExpandable);
             } else {
-                mReviews.setText(R.string.noReviews);
+                expText.setText(getResources().getString(R.string.noReviews));
             }
 
         }
@@ -369,7 +375,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onLoadFinished(Loader loader, Object data) {
 
-            ArrayList<String> mArrayVideos = (ArrayList<String>)data;
+            ArrayList<String> mArrayVideos = (ArrayList<String>) data;
             mVideoAdapter.setArrayListData(mArrayVideos);
 
         }
@@ -384,14 +390,14 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     public void onListItemClick(int position) {
 
         String videoKey = mArrayVideos.get(position);
-        Log.e("videoKey",videoKey);
+        Log.e("videoKey", videoKey);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(YOUTUBE_BASE_URL_VIDEO+videoKey));
+        intent.setData(Uri.parse(YOUTUBE_BASE_URL_VIDEO + videoKey));
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
-        }else{
-            Toast.makeText(MovieDetails.this, R.string.installBrowser,Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(MovieDetails.this, R.string.installBrowser, Toast.LENGTH_LONG).show();
         }
     }
 }

@@ -115,7 +115,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
 
                 case R.drawable.heart:
                     fab.setImageResource(R.drawable.heart_out);
-                    fab.setTag(0);
                     fab.setTag(R.drawable.heart_out);
                     //method to erase movie from favorites
                     deleteInfoFromDB();

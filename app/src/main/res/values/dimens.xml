@@ -20,4 +20,6 @@
     <dimen name="trailersMarginTop">20dp</dimen>
     <dimen name="trailertextsize">16sp</dimen>
     <dimen name="marginExpandTo">10dp</dimen>
+    <dimen name="mainGridTitlePaddingLeft">7dp</dimen>
+    <dimen name="mainGridRelativeHeight">320dp</dimen>
 </resources>

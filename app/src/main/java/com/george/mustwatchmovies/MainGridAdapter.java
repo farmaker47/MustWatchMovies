@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.george.mustwatchmovies.data.MustWatchMoviesContract;
 import com.george.mustwatchmovies.network.NetworkUtilities;
@@ -23,12 +24,12 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
     private Context mContext;
     private MoviesClickItemListener mMoviesClickItemListener;
 
-    public MainGridAdapter(Context context,MoviesClickItemListener listener) {
+    public MainGridAdapter(Context context, MoviesClickItemListener listener) {
         mContext = context;
         mMoviesClickItemListener = listener;
     }
 
-    public interface MoviesClickItemListener{
+    public interface MoviesClickItemListener {
         void onListItemClick(int itemIndex);
     }
 
@@ -54,10 +55,18 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
         //transform to url
         String combinedUrl = NetworkUtilities.imageUrl(pathFromTable);
         //load with Picasso because with Glide I had rotation problems
-        Log.e("image",combinedUrl);
+        Log.e("image", combinedUrl);
         Picasso.with(mContext)
                 .load(combinedUrl)
                 .into((holder.image));
+
+        //set title
+        String title = mCursor.getString(mCursor.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_TITLE));
+        holder.textTitle.setText(title);
+
+        //set rating
+        String rating = mCursor.getString(mCursor.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_VOTE_AVERAGE));
+        holder.textRating.setText(rating + "/10");
 
     }
 
@@ -70,11 +79,14 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
     class MainViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView image;
+        TextView textTitle, textRating;
 
         public MainViewHolder(View itemView) {
             super(itemView);
 
             image = itemView.findViewById(R.id.imageMainGrid);
+            textTitle = itemView.findViewById(R.id.textMainGridTitle);
+            textRating = itemView.findViewById(R.id.ratingNumberMain);
             itemView.setOnClickListener(this);
         }
 

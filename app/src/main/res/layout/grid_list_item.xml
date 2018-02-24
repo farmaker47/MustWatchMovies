@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@drawable/main_grid_selector"
-    android:layout_height="@dimen/recyclerHeight">
+    android:layout_height="@dimen/mainGridRelativeHeight"
+    android:background="@drawable/main_grid_selector">
 
-    <ImageView
-        android:id="@+id/imageMainGrid"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/imageMainGrid"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:contentDescription="@string/poster_of_movies" />
+        android:background="@drawable/edges_item">
+
+        <ImageView
+            android:id="@+id/imageMainGrid"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/imageMainGrid"
+            android:layout_marginTop="@dimen/mainGridTitlePaddingLeft"
+            android:contentDescription="@string/poster_of_movies" />
+
+        <TextView
+            android:id="@+id/textMainGridTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imageMainGrid"
+            android:textColor="@color/primary_text"
+            android:paddingLeft="@dimen/mainGridTitlePaddingLeft"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/ratingMainGrid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textMainGridTitle"
+            android:paddingLeft="@dimen/mainGridTitlePaddingLeft"
+            android:text="@string/rating"
+            android:textAllCaps="false"
+            android:layout_marginBottom="7dp"/>
+
+        <TextView
+            android:id="@+id/ratingNumberMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textMainGridTitle"
+            android:layout_toRightOf="@id/ratingMainGrid"
+            android:paddingLeft="@dimen/mainGridTitlePaddingLeft"
+            android:layout_marginBottom="7dp"/>
+    </RelativeLayout>
+
 
 </RelativeLayout>

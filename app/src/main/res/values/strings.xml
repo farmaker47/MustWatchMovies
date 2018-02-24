@@ -27,4 +27,7 @@
     <string name="installBrowser">Install browser or youtube app to play video</string>
     <string name="send_app_header_of_intent">Share video:</string>
     <string name="tsekare_me_internet">Watch this fantastic movie:</string>
+    <string name="noVideosTrailer">No video trailers, please check internet connection</string>
+    <string name="trailersText">trailers</string>
+    <string name="reviewsText">reviews</string>
 </resources>

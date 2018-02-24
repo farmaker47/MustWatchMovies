@@ -25,7 +25,7 @@
         android:layout_marginTop="4dp"/>
 
     <View
-        android:layout_width="14dp"
+        android:layout_width="@dimen/viewDimRight"
         android:layout_height="100dp"
         android:layout_toRightOf="@id/videoViewToLoad">
 

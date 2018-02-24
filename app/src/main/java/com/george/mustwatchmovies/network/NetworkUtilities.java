@@ -40,12 +40,18 @@ public class NetworkUtilities {
     private static final String IMAGE_POSTER_URL =
             "https://image.tmdb.org/t/p/";
     private static final String IMAGE_SIZE = "w342";
+    private static final String IMAGE_SIZE_BACK = "w500";
     private static final String REVIEWS_PARAMETER = "reviews";
     private static final String VIDEOS_PARAMETER = "videos";
 
     //here we combine the poster path with the base url so the Picasso library to load the image inside imageview
     public static String imageUrl(String string) {
         String urlString = IMAGE_POSTER_URL + IMAGE_SIZE + string;
+        return urlString;
+    }
+
+    public static String imageBackUrl(String string) {
+        String urlString = IMAGE_POSTER_URL + IMAGE_SIZE_BACK + string;
         return urlString;
     }
 
@@ -186,6 +192,7 @@ public class NetworkUtilities {
                 String overview;
                 String rating;
                 String specialId;
+                String backImage;
 
                 //we use optString in case there is no input
                 JSONObject movieObject = movieResultsArray.getJSONObject(i);
@@ -195,6 +202,7 @@ public class NetworkUtilities {
                 imagePath = movieObject.optString("poster_path");
                 overview = movieObject.optString("overview");
                 rating = movieObject.optString("vote_average");
+                backImage = movieObject.optString("backdrop_path");
 
                 if (parameter.equals(context.getResources().getString(R.string.popularString))) {
 
@@ -205,6 +213,7 @@ public class NetworkUtilities {
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_POSTER_URL, imagePath);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_OVERVIEW, overview);
                     contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_VOTE_AVERAGE, rating);
+                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_IMAGEBACKGROUND, backImage);
 
                     moviesContentValues[i] = contentValues;
                 } else if (parameter.equals(context.getResources().getString(R.string.topRatedString))) {
@@ -216,6 +225,7 @@ public class NetworkUtilities {
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_SPECIAL_ID, specialId);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_OVERVIEW, overview);
                     contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_VOTE_AVERAGE, rating);
+                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_IMAGEBACKGROUND, backImage);
 
                     moviesContentValues[i] = contentValues;
                 }

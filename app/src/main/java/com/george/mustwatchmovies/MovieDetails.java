@@ -39,15 +39,15 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     private int numberOfIncoming;
     private int columnIDIndex = -1;
     private String queryParameter, stringForDeletingRow, jsonResultsReviews, jsonResultsVideos, totalInfo;
-    private String pathFromDB, titleOfMovie, ratingOfMovie, releaseOfMovie, overviewOfMovie, specialIdOfMovie, stringForExpandable;
+    private String pathFromDB, titleOfMovie, ratingOfMovie, releaseOfMovie, overviewOfMovie, specialIdOfMovie, stringForExpandable, stringBackground;
     private static final int DB_DETAILS_LOADER = 477;
     private static final int CHECK_SPECIAL_ID_LOADER = 77;
     private static final int LOADER_FOR_REVIEWS = 74;
     private static final int LOADER_FOR_VIDEOS = 744;
     private static final String YOUTUBE_BASE_URL_VIDEO = "https://www.youtube.com/watch?v=";
 
-    private ImageView mImage, mImageForCollapse;
-    private TextView mTitle, mRating, mReleaseDate, mOverview, mDummy, mReviews;
+    private ImageView mImage, mImageForCollapse, mImageBack;
+    private TextView mTitle, mRating, mReleaseDate, mOverview, mDummy, mReviews, mEmptyVideos;
     private ExpandableTextView expText;
     private ActionBar actionBar;
     private FloatingActionButton fab;
@@ -85,8 +85,10 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         mDummy = findViewById(R.id.textViewDummy);
         mReviews = findViewById(R.id.expandable_text);
         mImageForCollapse = findViewById(R.id.expand_collapse);
+        mImageBack = findViewById(R.id.imageBackground);
         mRecyclerDetailScreen = findViewById(R.id.recyclerDetailScreen);
         expText = findViewById(R.id.expand_text_view);
+        mEmptyVideos = findViewById(R.id.textViewEmpty);
 
         mRecyclerDetailScreen.setHasFixedSize(true);
         LinearLayoutManager layoutManager
@@ -104,7 +106,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                 favoritizeMovie();
             }
         });
-        stringForExpandable="";
+        stringForExpandable = "";
     }
 
     private void favoritizeMovie() {
@@ -114,9 +116,9 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             switch (resourceID) {
 
                 case R.drawable.heart:
-                    fab.setImageResource(R.drawable.heart_out);
 
                     fab.setTag(R.drawable.heart_out);
+                    fab.setImageResource(R.drawable.heart_out);
                     //method to erase movie from favorites
                     deleteInfoFromDB();
                     Toast.makeText(MovieDetails.this, R.string.movieDeletedFavorites, Toast.LENGTH_LONG).show();
@@ -129,6 +131,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                     Toast.makeText(MovieDetails.this, R.string.movieIntoFavorites, Toast.LENGTH_LONG).show();
                     break;
                 default:
+                    fab.setImageResource(R.drawable.heart_out);
                     Log.e("NOTHING", "In");
                     break;
 
@@ -149,6 +152,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_SPECIAL_ID, specialIdOfMovie);
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_OVERVIEW, overviewOfMovie);
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_VOTE_AVERAGE, ratingOfMovie);
+        contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_IMAGEBACKGROUND, stringBackground);
 
         Uri uri = getContentResolver().insert(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, contentValues);
         Log.e("DONE", "In");
@@ -158,7 +162,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onPause() {
         super.onPause();
-        stringForExpandable="";
+        stringForExpandable = "";
         getSupportLoaderManager().destroyLoader(DB_DETAILS_LOADER);
         //???? destroy other Loaders?
     }
@@ -208,11 +212,20 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         specialIdOfMovie = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID));
         mDummy.setText(specialIdOfMovie);
 
+        //base image
         pathFromDB = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_POSTER_URL));
         String url = NetworkUtilities.imageUrl(pathFromDB);
         Picasso.with(this)
                 .load(url)
                 .into(mImage);
+
+        //background image
+        stringBackground = data.getString(data.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_IMAGEBACKGROUND));
+        String urlBack = NetworkUtilities.imageBackUrl(stringBackground);
+        Picasso.with(this)
+                .load(urlBack)
+                .into(mImageBack);
+
         data.close();
 
         //initializing the loader to check if this movie is already in favorites DB
@@ -378,6 +391,14 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             ArrayList<String> mArrayVideos = (ArrayList<String>) data;
             mVideoAdapter.setArrayListData(mArrayVideos);
 
+            if (mArrayVideos.size() > 0) {
+                mRecyclerDetailScreen.setVisibility(View.VISIBLE);
+                mEmptyVideos.setVisibility(View.GONE);
+            } else {
+                mRecyclerDetailScreen.setVisibility(View.GONE);
+                mEmptyVideos.setVisibility(View.VISIBLE);
+            }
+
         }
 
         @Override
@@ -400,4 +421,5 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             Toast.makeText(MovieDetails.this, R.string.installBrowser, Toast.LENGTH_LONG).show();
         }
     }
+
 }

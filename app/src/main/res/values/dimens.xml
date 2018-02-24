@@ -9,4 +9,7 @@
     <dimen name="titleTextSize">20sp</dimen>
     <dimen name="textOverviewPadding">7dp</dimen>
     <dimen name="marginLeftRatingTextView">4dp</dimen>
+    <dimen name="marginRecyclerVideos">10dp</dimen>
+    <dimen name="recyclerPadding">4dp</dimen>
+    <dimen name="dimensionOfVideoImages">30dp</dimen>
 </resources>

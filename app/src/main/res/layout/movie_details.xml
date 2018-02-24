@@ -18,6 +18,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
+
                 <ImageView
                     android:id="@+id/imageDetailScreen"
                     android:layout_width="wrap_content"
@@ -31,8 +32,8 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="2">
+                android:layout_weight="2"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textViewTitleDetail"
@@ -75,16 +76,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/textOverviewPadding" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerDetailScreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/marginRecyclerVideos"
+            android:padding="@dimen/recyclerPadding">
+
+        </android.support.v7.widget.RecyclerView>
+
         <TextView
             android:id="@+id/textViewDummy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/textOverviewPadding" />
+
         <TextView
             android:id="@+id/textViewReviews"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/textOverviewPadding" />
+
     </LinearLayout>
 
 </ScrollView>

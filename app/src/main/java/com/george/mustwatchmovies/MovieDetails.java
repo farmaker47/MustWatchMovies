@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -12,6 +13,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +30,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MovieDetails extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieDetails extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,VideoRecyclerViewAdapter.VideosClickItemListener {
 
     private static final String LOG_TAG = MovieDetails.class.getSimpleName();
 
@@ -35,17 +38,21 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     private static final String CURRENT_QUERY = "current_query";
     private int numberOfIncoming;
     private int columnIDIndex = -1;
-    private String queryParameter, stringForDeletingRow, jsonResultsReviews, jsonResultsVideos,totalInfo;
+    private String queryParameter, stringForDeletingRow, jsonResultsReviews, jsonResultsVideos, totalInfo;
     private String pathFromDB, titleOfMovie, ratingOfMovie, releaseOfMovie, overviewOfMovie, specialIdOfMovie;
     private static final int DB_DETAILS_LOADER = 477;
     private static final int CHECK_SPECIAL_ID_LOADER = 77;
     private static final int LOADER_FOR_REVIEWS = 74;
     private static final int LOADER_FOR_VIDEOS = 744;
+    private static final String YOUTUBE_BASE_URL_VIDEO = "https://www.youtube.com/watch?v=";
 
     private ImageView mImage;
     private TextView mTitle, mRating, mReleaseDate, mOverview, mDummy, mReviews;
     private ActionBar actionBar;
     private FloatingActionButton fab;
+    private RecyclerView mRecyclerDetailScreen;
+    private VideoRecyclerViewAdapter mVideoAdapter;
+    private ArrayList<String> mArrayVideos = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +83,15 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         mOverview = findViewById(R.id.textViewOverviewDetail);
         mDummy = findViewById(R.id.textViewDummy);
         mReviews = findViewById(R.id.textViewReviews);
+        mRecyclerDetailScreen = findViewById(R.id.recyclerDetailScreen);
+
+        mRecyclerDetailScreen.setHasFixedSize(true);
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerDetailScreen.setLayoutManager(layoutManager);
+
+        mVideoAdapter = new VideoRecyclerViewAdapter(this,this);
+        mRecyclerDetailScreen.setAdapter(mVideoAdapter);
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +111,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
 
                 case R.drawable.heart:
                     fab.setImageResource(R.drawable.heart_out);
+                    fab.setTag(0);
                     fab.setTag(R.drawable.heart_out);
                     //method to erase movie from favorites
                     deleteInfoFromDB();
@@ -280,22 +297,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                         e.printStackTrace();
                     }
 
-                    ////video data
-                    URL urlToFetchDataForVideos = NetworkUtilities.buildUrlForVideos(specialIdOfMovie);
-
-                    try {
-                        jsonResultsVideos = NetworkUtilities.makeHttpRequest(urlToFetchDataForVideos, MovieDetails.this);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    ArrayList<String> mArrayVideos = null;
-                    try {
-                        mArrayVideos = NetworkUtilities.mArrayListVideos(jsonResultsVideos, MovieDetails.this);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
                     return mArrayReviews;
                 }
             };
@@ -307,20 +308,23 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             ArrayList<MovieReview> arrayList = (ArrayList<MovieReview>) data;
             StringBuilder sb = new StringBuilder();
 
+            if (arrayList.size() > 0) {
+                for (int j = 0; j < arrayList.size(); j++) {
 
-            for (int j = 0; j < arrayList.size(); j++) {
+                    Log.e("sizeOfList :", String.valueOf(arrayList.size()));
+                    MovieReview mMovieReview = arrayList.get(j);
 
-                Log.e("sizeOfList :",String.valueOf(arrayList.size()));
-                MovieReview mMovieReview = arrayList.get(j);
+                    String review = mMovieReview.getReview();
+                    String author = mMovieReview.getAuthor();
 
-                String review = mMovieReview.getReview();
-                String author = mMovieReview.getAuthor();
+                    String total = "▶"+" " +author + ": " + " " + "“" +  review + "”" + "\n\n";
 
-                String total = author +":"+ review +"\n";
-
-                mReviews.append(total);
-
+                    mReviews.append(total);
+                }
+            } else {
+                mReviews.setText(R.string.noReviews);
             }
+
         }
 
         @Override
@@ -332,11 +336,41 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     private LoaderManager.LoaderCallbacks mLoaderForVideos = new LoaderManager.LoaderCallbacks() {
         @Override
         public Loader onCreateLoader(int id, Bundle args) {
-            return null;
+            return new AsyncTaskLoader<ArrayList>(MovieDetails.this) {
+
+                @Override
+                protected void onStartLoading() {
+                    forceLoad();
+                }
+
+                @Override
+                public ArrayList loadInBackground() {
+                    ////video data
+                    URL urlToFetchDataForVideos = NetworkUtilities.buildUrlForVideos(specialIdOfMovie);
+
+                    try {
+                        jsonResultsVideos = NetworkUtilities.makeHttpRequest(urlToFetchDataForVideos, MovieDetails.this);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    try {
+                        mArrayVideos = NetworkUtilities.mArrayListVideos(jsonResultsVideos, MovieDetails.this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return mArrayVideos;
+                }
+            };
         }
 
         @Override
         public void onLoadFinished(Loader loader, Object data) {
+
+            ArrayList<String> mArrayVideos = (ArrayList<String>)data;
+            mVideoAdapter.setArrayListData(mArrayVideos);
 
         }
 
@@ -345,4 +379,19 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
 
         }
     };
+
+    @Override
+    public void onListItemClick(int position) {
+
+        String videoKey = mArrayVideos.get(position);
+        Log.e("videoKey",videoKey);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(YOUTUBE_BASE_URL_VIDEO+videoKey));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }else{
+            Toast.makeText(MovieDetails.this, R.string.installBrowser,Toast.LENGTH_LONG).show();
+        }
+    }
 }

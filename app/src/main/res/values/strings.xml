@@ -40,5 +40,6 @@
     <string name="dummy_icon_of_trailers">dummy icon</string>
     <string name="click_to_share_video">click to share video</string>
     <string name="ratingValue">/10</string>
-    <string name="check_internet_connection">Check Internet Connection or Favorites are empty</string>
+    <string name="check_internet_connection">Check Internet Connection</string>
+    <string name="noMoviesAddedyet">No movies are added to Favorites yet</string>
 </resources>

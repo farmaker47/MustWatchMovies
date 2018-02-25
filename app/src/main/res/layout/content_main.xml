@@ -26,12 +26,16 @@
         android:id="@+id/linearNoInternet"
         android:visibility="gone">
         <ImageView
+            android:id="@+id/imageEptyLinear"
             android:layout_width="@dimen/dinoDim"
             android:layout_height="@dimen/dinoDim"
-            android:src="@drawable/dino"/>
+            android:src="@drawable/dino"
+            android:layout_gravity="center_horizontal"/>
         <TextView
+            android:id="@+id/textEmptyView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
             android:text="@string/check_internet_connection"/>
     </LinearLayout>
 

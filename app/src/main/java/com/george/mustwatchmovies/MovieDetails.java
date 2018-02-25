@@ -113,14 +113,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             int resourceID = (int) fab.getTag();
 
             switch (resourceID) {
-
-                case R.drawable.heart:
-                    fab.setTag(R.drawable.heart_out);
-                    fab.setImageResource(R.drawable.heart_out);
-                    //method to erase movie from favorites
-                    deleteInfoFromDB();
-                    Toast.makeText(MovieDetails.this, R.string.movieDeletedFavorites, Toast.LENGTH_LONG).show();
-                    break;
                 case R.drawable.heart_out:
                     fab.setImageResource(R.drawable.heart);
                     fab.setTag(R.drawable.heart);
@@ -128,6 +120,14 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                     insertInfoToDB();
                     Toast.makeText(MovieDetails.this, R.string.movieIntoFavorites, Toast.LENGTH_LONG).show();
                     break;
+                case R.drawable.heart:
+                    fab.setTag(R.drawable.heart_out);
+                    fab.setImageResource(R.drawable.heart_out);
+                    //method to erase movie from favorites
+                    deleteInfoFromDB();
+                    Toast.makeText(MovieDetails.this, R.string.movieDeletedFavorites, Toast.LENGTH_LONG).show();
+                    break;
+
                 default:
                     break;
 

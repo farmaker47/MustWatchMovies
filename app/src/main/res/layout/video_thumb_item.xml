@@ -5,15 +5,17 @@
 
     <ImageView
         android:id="@+id/videoViewToLoad"
-        android:layout_width="150dp"
-        android:layout_height="100dp" />
+        android:layout_width="@dimen/thumbImageWidth"
+        android:layout_height="@dimen/thumbImageHeight"
+        android:contentDescription="@string/thumbnail_of_video_trailers" />
 
     <ImageView
         android:layout_width="@dimen/dimensionOfVideoImages"
         android:layout_height="@dimen/dimensionOfVideoImages"
         android:layout_above="@id/imageToShare"
+        android:layout_marginStart="@dimen/thumbImageDummyMargLeft"
         android:src="@drawable/start_play"
-        android:layout_marginLeft="7dp"/>
+        android:contentDescription="@string/dummy_icon_of_trailers" />
 
     <ImageView
         android:id="@+id/imageToShare"
@@ -21,13 +23,14 @@
         android:layout_height="@dimen/dimensionOfVideoImages"
         android:layout_below="@id/videoViewToLoad"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/thumbImageShareMarg"
         android:src="@drawable/share_icon"
-        android:layout_marginTop="4dp"/>
+        android:contentDescription="@string/click_to_share_video" />
 
     <View
         android:layout_width="@dimen/viewDimRight"
-        android:layout_height="100dp"
-        android:layout_toRightOf="@id/videoViewToLoad">
+        android:layout_height="@dimen/thumbViewHeight"
+        android:layout_toEndOf="@id/videoViewToLoad">
 
     </View>
 

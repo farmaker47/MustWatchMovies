@@ -6,6 +6,7 @@ package com.george.mustwatchmovies;
 
 public class MovieReview {
 
+    //object to use it with reviews....author and review
     String mAuthor,mReview;
 
     public MovieReview(){}

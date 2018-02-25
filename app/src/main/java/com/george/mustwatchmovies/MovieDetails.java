@@ -102,7 +102,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Toast.makeText(MovieDetails.this, R.string.nextImplemented, Toast.LENGTH_LONG).show();*/
                 favoritizeMovie();
             }
         });
@@ -116,7 +115,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             switch (resourceID) {
 
                 case R.drawable.heart:
-
                     fab.setTag(R.drawable.heart_out);
                     fab.setImageResource(R.drawable.heart_out);
                     //method to erase movie from favorites
@@ -131,8 +129,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                     Toast.makeText(MovieDetails.this, R.string.movieIntoFavorites, Toast.LENGTH_LONG).show();
                     break;
                 default:
-                    fab.setImageResource(R.drawable.heart_out);
-                    Log.e("NOTHING", "In");
                     break;
 
             }
@@ -155,8 +151,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_IMAGEBACKGROUND, stringBackground);
 
         Uri uri = getContentResolver().insert(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, contentValues);
-        Log.e("DONE", "In");
-
     }
 
     @Override
@@ -164,7 +158,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         super.onPause();
         stringForExpandable = "";
         getSupportLoaderManager().destroyLoader(DB_DETAILS_LOADER);
-        //???? destroy other Loaders?
     }
 
     @Override
@@ -266,7 +259,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                 }
                 cursor.moveToNext();
             }
-            Log.e("Column ID:", String.valueOf(columnIDIndex));
+            Log.d(getString(R.string.columnSpecialId), String.valueOf(columnIDIndex));
 
             if (columnIDIndex == -1) {
                 fab.setImageResource(R.drawable.heart_out);
@@ -286,6 +279,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         }
     };
 
+    //loader to fetch reviews from API
     private LoaderManager.LoaderCallbacks mLoaderForReviews = new LoaderManager.LoaderCallbacks() {
         @Override
         public Loader onCreateLoader(int id, Bundle args) {
@@ -324,12 +318,11 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         public void onLoadFinished(Loader loader, Object data) {
 
             ArrayList<MovieReview> arrayList = (ArrayList<MovieReview>) data;
-            StringBuilder sb = new StringBuilder();
 
             if (arrayList.size() > 0) {
                 for (int j = 0; j < arrayList.size(); j++) {
 
-                    Log.e("sizeOfList :", String.valueOf(arrayList.size()));
+                    Log.e(getString(R.string.sizeOfReviewsList), String.valueOf(arrayList.size()));
                     MovieReview mMovieReview = arrayList.get(j);
 
                     String review = mMovieReview.getReview();
@@ -352,6 +345,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         }
     };
 
+    //loader to fetch data for videos
     private LoaderManager.LoaderCallbacks mLoaderForVideos = new LoaderManager.LoaderCallbacks() {
         @Override
         public Loader onCreateLoader(int id, Bundle args) {
@@ -389,8 +383,10 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         public void onLoadFinished(Loader loader, Object data) {
 
             ArrayList<String> mArrayVideos = (ArrayList<String>) data;
+            //passing data to recyclerview adapter
             mVideoAdapter.setArrayListData(mArrayVideos);
 
+            //visible or invisible empty TextView
             if (mArrayVideos.size() > 0) {
                 mRecyclerDetailScreen.setVisibility(View.VISIBLE);
                 mEmptyVideos.setVisibility(View.GONE);
@@ -411,8 +407,8 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     public void onListItemClick(int position) {
 
         String videoKey = mArrayVideos.get(position);
-        Log.e("videoKey", videoKey);
 
+        //implicit intent to watch video either on browser or Youtube app
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(YOUTUBE_BASE_URL_VIDEO + videoKey));
         if (intent.resolveActivity(getPackageManager()) != null) {

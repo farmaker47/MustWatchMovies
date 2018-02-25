@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -50,14 +49,15 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
 
         String videoString = mArrayListVideos.get(position);
         String totalThumb = YOUTUBE_BASE_URL + videoString + YOUTUBE_TIME_URL;
-        Log.e("VideoUrl", totalThumb);
+        Log.d(mContext.getString(R.string.videoUrlAdapter), totalThumb);
 
+        //load image from internet to imageview of video trailers recycler view
         Picasso.with(mContext)
                 .load(totalThumb)
                 .into((holder.videoView));
 
+        //a listener to share the video with implicit intent
         final String totalVideo = YOUTUBE_BASE_URL_VIDEO + videoString;
-
         holder.shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -5,7 +5,6 @@
     <string name="popularString">popular</string>
     <string name="favoritesString">favorite</string>
     <string name="topRatedString">top_rated</string>
-    <string name="nextImplemented">Will be implemented in stage 2</string>
     <string name="title_activity_movie_details">MovieDetails</string>
     <string name="rating">Rating:</string>
     <string name="details_screen_title">Movie Details</string>
@@ -23,11 +22,22 @@
     <string name="failedInsertRow">Failed to insert row in</string>
     <string name="movieDeletedFavorites">Movie deleted from Favorites!</string>
     <string name="movieIntoFavorites">Movie inserted into Favorites</string>
-    <string name="noReviews">No reviews available</string>
+    <string name="noReviews">No reviews available due to internet disconnection or no reviews are written yet.</string>
     <string name="installBrowser">Install browser or youtube app to play video</string>
     <string name="send_app_header_of_intent">Share video:</string>
     <string name="tsekare_me_internet">Watch this fantastic movie:</string>
-    <string name="noVideosTrailer">No video trailers, please check internet connection</string>
+    <string name="noVideosTrailer">No video trailers. Problem occurs when there are no available trailers or there is no internet connection</string>
     <string name="trailersText">trailers</string>
     <string name="reviewsText">reviews</string>
+    <string name="videoKey">VideoKey</string>
+    <string name="reviewContent">ReviewContent</string>
+    <string name="imageUrl">imageURL</string>
+    <string name="videoUrlAdapter">VideoUrl</string>
+    <string name="columnSpecialId">Column ID:</string>
+    <string name="sizeOfReviewsList">sizeOfList :</string>
+    <string name="click_to_expand">click to expand</string>
+    <string name="thumbnail_of_video_trailers">thumbnail of video trailers</string>
+    <string name="dummy_icon_of_trailers">dummy icon</string>
+    <string name="click_to_share_video">click to share video</string>
+    <string name="ratingValue">/10</string>
 </resources>

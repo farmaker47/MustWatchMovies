@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/imageMainGrid"
             android:textColor="@color/primary_text"
-            android:paddingLeft="@dimen/mainGridTitlePaddingLeft"
+            android:paddingStart="@dimen/mainGridTitlePaddingLeft"
             android:textStyle="bold" />
 
         <TextView
@@ -31,19 +31,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textMainGridTitle"
-            android:paddingLeft="@dimen/mainGridTitlePaddingLeft"
+            android:paddingStart="@dimen/mainGridTitlePaddingLeft"
             android:text="@string/rating"
             android:textAllCaps="false"
-            android:layout_marginBottom="7dp"/>
+            android:layout_marginBottom="@dimen/mainGridTitlePaddingLeft"/>
 
         <TextView
             android:id="@+id/ratingNumberMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/textMainGridTitle"
-            android:layout_toRightOf="@id/ratingMainGrid"
-            android:paddingLeft="@dimen/mainGridTitlePaddingLeft"
-            android:layout_marginBottom="7dp"/>
+            android:layout_toEndOf="@id/ratingMainGrid"
+            android:paddingStart="@dimen/mainGridTitlePaddingLeft"
+            android:layout_marginBottom="@dimen/mainGridTitlePaddingLeft"/>
     </RelativeLayout>
 
 

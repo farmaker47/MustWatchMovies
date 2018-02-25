@@ -22,4 +22,13 @@
     <dimen name="marginExpandTo">10dp</dimen>
     <dimen name="mainGridTitlePaddingLeft">7dp</dimen>
     <dimen name="mainGridRelativeHeight">320dp</dimen>
+    <dimen name="expTextDimenMargin">10dp</dimen>
+    <dimen name="expTextSize">16sp</dimen>
+    <dimen name="expImagePad">16dp</dimen>
+    <dimen name="detailsViewEnd">30dp</dimen>
+    <dimen name="thumbImageWidth">150dp</dimen>
+    <dimen name="thumbImageHeight">100dp</dimen>
+    <dimen name="thumbImageDummyMargLeft">7dp</dimen>
+    <dimen name="thumbImageShareMarg">4dp</dimen>
+    <dimen name="thumbViewHeight">100dp</dimen>
 </resources>

@@ -22,8 +22,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/linearBaseImageMarginLeft"
-            android:orientation="horizontal">
+            android:layout_marginStart="@dimen/linearBaseImageMarginLeft"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -45,7 +46,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/linearTitleLeft"
+                android:layout_marginStart="@dimen/linearTitleLeft"
                 android:layout_weight="2"
                 android:orientation="vertical">
 
@@ -97,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/trailersMarginTop"
-            android:paddingLeft="@dimen/textOverviewPadding"
+            android:paddingStart="@dimen/textOverviewPadding"
             android:text="@string/trailersText"
             android:textAllCaps="true"
             android:textColor="@color/primary_text"
@@ -131,7 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/trailersMarginTop"
-            android:paddingLeft="@dimen/textOverviewPadding"
+            android:paddingStart="@dimen/textOverviewPadding"
             android:text="@string/reviewsText"
             android:textAllCaps="true"
             android:textColor="@color/primary_text"
@@ -151,10 +152,10 @@
                 android:id="@id/expandable_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:textColor="#666666"
-                android:textSize="16sp" />
+                android:layout_marginLeft="@dimen/expTextDimenMargin"
+                android:layout_marginRight="@dimen/expTextDimenMargin"
+                android:textColor="@color/secondary_text"
+                android:textSize="@dimen/expTextSize" />
 
             <ImageButton
                 android:id="@id/expand_collapse"
@@ -162,12 +163,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:background="@android:color/transparent"
-                android:padding="16dp" />
+                android:padding="@dimen/expImagePad"
+                android:contentDescription="@string/click_to_expand" />
         </com.ms.square.android.expandabletextview.ExpandableTextView>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="30dp">
+            android:layout_height="@dimen/detailsViewEnd">
 
         </View>
 

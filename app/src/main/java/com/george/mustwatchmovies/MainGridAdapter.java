@@ -55,7 +55,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
         //transform to url
         String combinedUrl = NetworkUtilities.imageUrl(pathFromTable);
         //load with Picasso because with Glide I had rotation problems
-        Log.e("image", combinedUrl);
+        Log.d(mContext.getString(R.string.imageUrl), combinedUrl);
         Picasso.with(mContext)
                 .load(combinedUrl)
                 .into((holder.image));
@@ -66,8 +66,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
 
         //set rating
         String rating = mCursor.getString(mCursor.getColumnIndex(MustWatchMoviesContract.MoviePopular.COLUMN_VOTE_AVERAGE));
-        holder.textRating.setText(rating + "/10");
-
+        holder.textRating.setText(rating + mContext.getString(R.string.ratingValue));
     }
 
     @Override

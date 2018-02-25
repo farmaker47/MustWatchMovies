@@ -50,6 +50,7 @@ public class NetworkUtilities {
         return urlString;
     }
 
+    //here we combine the background poster path with the base url so the Picasso library to load the image inside imageview
     public static String imageBackUrl(String string) {
         String urlString = IMAGE_POSTER_URL + IMAGE_SIZE_BACK + string;
         return urlString;
@@ -90,7 +91,7 @@ public class NetworkUtilities {
         return url;
     }
 
-    //we combine different piece of information to build Url for reviews
+    //we combine different piece of information to build Url for videos
     public static URL buildUrlForVideos(String stringId){
 
         Uri uriToBuild = Uri.parse(MOVIE_BASE_URL).buildUpon()
@@ -256,7 +257,7 @@ public class NetworkUtilities {
 
                         mArrayV.add(video);
 
-                        Log.e("VideoKey", video);
+                        Log.d(context.getString(R.string.videoKey), video);
                     }
 
                 }
@@ -294,14 +295,11 @@ public class NetworkUtilities {
 
                         mArrayR.add(movieReview);
 
-                        Log.e("ReviewContent", review);
+                        Log.d(context.getString(R.string.reviewContent), review);
 
                     }
-                    Log.e("sizeOfArrayInUtilities",String.valueOf(mArrayR.size()));
                 }
             }
-
-
         } catch (JSONException e) {
             Log.d(LOG_TAG, context.getString(R.string.problemParsingJson), e);
         }

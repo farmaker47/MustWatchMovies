@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.george.mustwatchmovies.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:background="@color/icons">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mainRecyclerView"
@@ -15,5 +16,23 @@
         android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearNoInternet"
+        android:visibility="gone">
+        <ImageView
+            android:layout_width="@dimen/dinoDim"
+            android:layout_height="@dimen/dinoDim"
+            android:src="@drawable/dino"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_internet_connection"/>
+    </LinearLayout>
 
 </RelativeLayout>

@@ -31,4 +31,5 @@
     <dimen name="thumbImageDummyMargLeft">7dp</dimen>
     <dimen name="thumbImageShareMarg">4dp</dimen>
     <dimen name="thumbViewHeight">100dp</dimen>
+    <dimen name="dinoDim">150dp</dimen>
 </resources>

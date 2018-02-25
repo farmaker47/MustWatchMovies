@@ -23,6 +23,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.george.mustwatchmovies.data.MustWatchMoviesContract;
 import com.george.mustwatchmovies.data.MustWatchMoviesDBHelper;
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
     private ActionBar ab;
     private static final String NUMBER_OF_GRID = "number";
     private static final String CURRENT_QUERY = "current_query";
+    private LinearLayout mLinearNoInternet;
+    private CursorLoader cLoader;
+    private Cursor cursorToCompare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mLinearNoInternet = findViewById(R.id.linearNoInternet);
 
         //we set the name in actionbar so the user gets informed what is he/she watching at that time
         ab = getSupportActionBar();
@@ -112,14 +119,19 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
                 } else {
                     loaderManager.restartLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
                 }
+                mLinearNoInternet.setVisibility(View.GONE);
             } else {
                 //if you have internet but you have selected favorites
                 beginLoaderToDisplayData();
             }
         } else {
+
             //if there is no internet connection use this function to display previous saved data
             //so the user see a movie and dont go outside for a walk :)
             beginLoaderToDisplayData();
+
+            //
+            mLinearNoInternet.setVisibility(View.VISIBLE);
         }
     }
 
@@ -207,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         public Loader onCreateLoader(int id, Bundle args) {
 
             //depend on what is selected we query the specific table
-            CursorLoader cLoader = null;
+            cLoader = null;
             if (queryStringPath.equals(getResources().getString(R.string.popularString))) {
                 cLoader = new CursorLoader(MainActivity.this, MustWatchMoviesContract.MoviePopular.CONTENT_URI_POPULAR, null, null, null, null);
             } else if (queryStringPath.equals(getResources().getString(R.string.topRatedString))) {
@@ -215,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             } else if (queryStringPath.equals(getResources().getString(R.string.favoritesString))) {
                 cLoader = new CursorLoader(MainActivity.this, MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, null, null, null, null);
             }
+
             return cLoader;
         }
 
@@ -223,6 +236,12 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             if (data != null) {
                 //we pass the data to the adapter
                 mGridAdapter.setCursorData(data);
+                if(data.getCount()>0){
+                    mLinearNoInternet.setVisibility(View.GONE);
+                }else{
+                    mLinearNoInternet.setVisibility(View.VISIBLE);
+                }
+
             }
         }
 
@@ -374,6 +393,12 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             //so the user see a movie and dont go outside for a walk :)
             beginLoaderToDisplayData();
         }
+        /*//check if cursor that fetches data is not null
+        if (cursorToCompare.getCount() > 0) {
+            mLinearNoInternet.setVisibility(View.GONE);
+        } else {
+            mLinearNoInternet.setVisibility(View.VISIBLE);
+        }*/
     }
 
     @Override

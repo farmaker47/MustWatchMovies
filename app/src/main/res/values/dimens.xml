@@ -21,7 +21,7 @@
     <dimen name="trailertextsize">16sp</dimen>
     <dimen name="marginExpandTo">10dp</dimen>
     <dimen name="mainGridTitlePaddingLeft">7dp</dimen>
-    <dimen name="mainGridRelativeHeight">320dp</dimen>
+    <dimen name="mainGridRelativeHeight">310dp</dimen>
     <dimen name="expTextDimenMargin">10dp</dimen>
     <dimen name="expTextSize">16sp</dimen>
     <dimen name="expImagePad">16dp</dimen>

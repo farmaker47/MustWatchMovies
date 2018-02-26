@@ -105,6 +105,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                 favoritizeMovie();
             }
         });
+
         stringForExpandable = "";
     }
 
@@ -113,7 +114,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
             int resourceID = (int) fab.getTag();
 
             switch (resourceID) {
-                case R.drawable.heart_out:
+                case R.drawable.bottle_out:
                     fab.setImageResource(R.drawable.heart);
                     fab.setTag(R.drawable.heart);
                     //method to add movie in favorites
@@ -121,8 +122,8 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                     Toast.makeText(MovieDetails.this, R.string.movieIntoFavorites, Toast.LENGTH_LONG).show();
                     break;
                 case R.drawable.heart:
-                    fab.setTag(R.drawable.heart_out);
-                    fab.setImageResource(R.drawable.heart_out);
+                    fab.setTag(R.drawable.bottle_out);
+                    fab.setImageResource(R.drawable.bottle_out);
                     //method to erase movie from favorites
                     deleteInfoFromDB();
                     Toast.makeText(MovieDetails.this, R.string.movieDeletedFavorites, Toast.LENGTH_LONG).show();
@@ -132,7 +133,6 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                     break;
 
             }
-
         }
     }
 
@@ -259,12 +259,22 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                 }
                 cursor.moveToNext();
             }
-            Log.d(getString(R.string.columnSpecialId), String.valueOf(columnIDIndex));
+            Log.e(getString(R.string.columnSpecialId), String.valueOf(columnIDIndex));
 
             if (columnIDIndex == -1) {
-                fab.setImageResource(R.drawable.heart_out);
-                fab.setTag(R.drawable.heart_out);
+                fab.setImageResource(R.drawable.bottle_out);
+                fab.setTag(R.drawable.bottle_out);
             } else {
+
+                if (fab.getTag() != null) {
+                    int resourceID = (int) fab.getTag();
+
+                    switch (resourceID) {
+                        case R.drawable.bottle_out:
+                            return;
+
+                    }
+                }
                 fab.setImageResource(R.drawable.heart);
                 fab.setTag(R.drawable.heart);
             }

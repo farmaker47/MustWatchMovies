@@ -20,6 +20,8 @@
         <TextView
             android:id="@+id/textMainGridTitle"
             android:layout_width="match_parent"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:layout_height="wrap_content"
             android:layout_below="@id/imageMainGrid"
             android:textColor="@color/primary_text"

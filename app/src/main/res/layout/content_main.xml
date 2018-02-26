@@ -30,7 +30,8 @@
             android:layout_width="@dimen/dinoDim"
             android:layout_height="@dimen/dinoDim"
             android:src="@drawable/dino"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/empty_image_when_no_internet_connection" />
         <TextView
             android:id="@+id/textEmptyView"
             android:layout_width="wrap_content"

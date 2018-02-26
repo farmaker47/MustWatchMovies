@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
     private CursorLoader cLoader;
     private TextView mTextEmpty;
     private ImageView mImageEmpty;
+
+    private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +110,13 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         mGridAdapter = new MainGridAdapter(this, this);
         mRecyclerView.setAdapter(mGridAdapter);
 
+        //restore recycler view at same position
+        if(savedInstanceState != null)
+        {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            mGridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
+        }
+
         //Upon creation we check if there is internet connection
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -136,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             //if there is no internet connection use this function to display previous saved data
             //so the user see a movie and dont go outside for a walk :)
             beginLoaderToDisplayData();
-
             //
             mLinearNoInternet.setVisibility(View.VISIBLE);
 
@@ -148,6 +157,12 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
                 mImageEmpty.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mGridLayoutManager.onSaveInstanceState());
     }
 
     private LoaderManager.LoaderCallbacks mLoaderInternet = new LoaderManager.LoaderCallbacks() {

@@ -42,4 +42,5 @@
     <string name="ratingValue">/10</string>
     <string name="check_internet_connection">Check Internet Connection</string>
     <string name="noMoviesAddedyet">No movies are added to Favorites yet</string>
+    <string name="empty_image_when_no_internet_connection">empty image when no internet connection</string>
 </resources>

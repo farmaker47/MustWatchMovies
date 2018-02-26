@@ -127,6 +127,8 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
                     //method to erase movie from favorites
                     deleteInfoFromDB();
                     Toast.makeText(MovieDetails.this, R.string.movieDeletedFavorites, Toast.LENGTH_LONG).show();
+
+
                     //if you delete something from favorites finish activity
                     if (queryParameter.equals(getResources().getString(R.string.favoritesString))) {
                         finish();

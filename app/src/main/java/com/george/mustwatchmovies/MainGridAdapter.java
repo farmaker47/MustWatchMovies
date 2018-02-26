@@ -39,8 +39,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.grid_list_item, parent, false);
 
-        MainViewHolder vh = new MainViewHolder(v);
-        return vh;
+        return new MainViewHolder(v);
     }
 
     @Override

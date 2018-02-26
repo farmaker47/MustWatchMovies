@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.george.mustwatchmovies.data.MustWatchMoviesContract;
-import com.george.mustwatchmovies.data.MustWatchMoviesDBHelper;
 import com.george.mustwatchmovies.network.NetworkUtilities;
 
 import java.io.IOException;
@@ -41,8 +39,6 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
     private RecyclerView mRecyclerView;
     private MainGridAdapter mGridAdapter;
     private GridLayoutManager mGridLayoutManager;
-    private SQLiteDatabase mDb;
-    private MustWatchMoviesDBHelper dbHelper;
     private static final int INTERNET_LOADER = 23;
     private static final int DB_LOADER = 47;
     private String titleOfActionBar, tableToQuery, queryStringPath, jsonResults;
@@ -88,13 +84,6 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             ab.setTitle(getResources().getString(R.string.action_favorites));
         }
 
-        try {
-            dbHelper = new MustWatchMoviesDBHelper(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        mDb = dbHelper.getWritableDatabase();
-
         mRecyclerView = findViewById(R.id.mainRecyclerView);
         mRecyclerView.setHasFixedSize(true);
 
@@ -111,8 +100,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         mRecyclerView.setAdapter(mGridAdapter);
 
         //restore recycler view at same position
-        if(savedInstanceState != null)
-        {
+        if (savedInstanceState != null) {
             Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
             mGridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
         }
@@ -149,10 +137,10 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             //
             mLinearNoInternet.setVisibility(View.VISIBLE);
 
-            if(queryStringPath.equals(getResources().getString(R.string.favoritesString))){
+            if (queryStringPath.equals(getResources().getString(R.string.favoritesString))) {
                 mTextEmpty.setText(R.string.noMoviesAddedyet);
                 mImageEmpty.setVisibility(View.GONE);
-            }else{
+            } else {
                 mTextEmpty.setText(R.string.check_internet_connection);
                 mImageEmpty.setVisibility(View.VISIBLE);
             }
@@ -266,12 +254,11 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             if (data != null) {
                 //we pass the data to the adapter
                 mGridAdapter.setCursorData(data);
-                if(data.getCount()>0){
+                if (data.getCount() > 0) {
                     mLinearNoInternet.setVisibility(View.GONE);
-                }else{
+                } else {
                     mLinearNoInternet.setVisibility(View.VISIBLE);
                 }
-
             }
         }
 
@@ -424,10 +411,10 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
             //if there is no internet connection use this function to display previous saved data
             //so the user see a movie and dont go outside for a walk :)
             beginLoaderToDisplayData();
-            if(queryStringPath.equals(getResources().getString(R.string.favoritesString))){
+            if (queryStringPath.equals(getResources().getString(R.string.favoritesString))) {
                 mTextEmpty.setText(R.string.noMoviesAddedyet);
                 mImageEmpty.setVisibility(View.GONE);
-            }else{
+            } else {
                 mTextEmpty.setText(R.string.check_internet_connection);
                 mImageEmpty.setVisibility(View.VISIBLE);
             }

@@ -35,7 +35,7 @@ public class NetworkUtilities {
             "https://api.themoviedb.org/3/movie";
 
     private final static String KEY = "api_key";
-    private static final String API_KEY = "6584e0eb115706e400e300aa87fd0c2b";
+    private static final String API_KEY = "";
 
     private static final String IMAGE_POSTER_URL =
             "https://image.tmdb.org/t/p/";
@@ -46,14 +46,12 @@ public class NetworkUtilities {
 
     //here we combine the poster path with the base url so the Picasso library to load the image inside imageview
     public static String imageUrl(String string) {
-        String urlString = IMAGE_POSTER_URL + IMAGE_SIZE + string;
-        return urlString;
+        return IMAGE_POSTER_URL + IMAGE_SIZE + string;
     }
 
     //here we combine the background poster path with the base url so the Picasso library to load the image inside imageview
     public static String imageBackUrl(String string) {
-        String urlString = IMAGE_POSTER_URL + IMAGE_SIZE_BACK + string;
-        return urlString;
+        return IMAGE_POSTER_URL + IMAGE_SIZE_BACK + string;
     }
 
     //here we combine different pieces of information to create the whole url from which we will retrieve json results

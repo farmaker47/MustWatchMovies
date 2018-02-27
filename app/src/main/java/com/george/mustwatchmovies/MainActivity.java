@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
     private CursorLoader cLoader;
     private TextView mTextEmpty;
     private ImageView mImageEmpty;
+    private Parcelable savedRecyclerLayoutState;
 
     private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout";
 
@@ -99,12 +100,6 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
         mGridAdapter = new MainGridAdapter(this, this);
         mRecyclerView.setAdapter(mGridAdapter);
 
-        //restore recycler view at same position
-        if (savedInstanceState != null) {
-            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
-            mGridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
-        }
-
         //Upon creation we check if there is internet connection
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -151,6 +146,16 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mGridLayoutManager.onSaveInstanceState());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        //restore recycler view at same position
+        if (savedInstanceState != null) {
+            savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+        }
     }
 
     private LoaderManager.LoaderCallbacks mLoaderInternet = new LoaderManager.LoaderCallbacks() {
@@ -259,6 +264,11 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.M
                 } else {
                     mLinearNoInternet.setVisibility(View.VISIBLE);
                 }
+            }
+
+            //restore recycler view position
+            if(savedRecyclerLayoutState!=null){
+                mGridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
             }
         }
 

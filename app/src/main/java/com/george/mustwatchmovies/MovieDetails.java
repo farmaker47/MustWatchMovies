@@ -1,5 +1,6 @@
 package com.george.mustwatchmovies;
 
+import android.content.AsyncQueryHandler;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -53,7 +54,7 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
     private FloatingActionButton fab;
     private RecyclerView mRecyclerDetailScreen;
     private VideoRecyclerViewAdapter mVideoAdapter;
-    private ArrayList<String> mArrayVideos = null;
+    private ArrayList<String> mArrayVideos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +108,11 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         });
 
         stringForExpandable = "";
+
+        //retrieve list after orientation change
+        try{
+            mArrayVideos = (ArrayList)getLastCustomNonConfigurationInstance();
+        } catch(NullPointerException e) {}
     }
 
     private void favoritizeMovie() {
@@ -156,7 +162,10 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_VOTE_AVERAGE, ratingOfMovie);
         contentValues.put(MustWatchMoviesContract.MovieFavorites.COLUMN_IMAGEBACKGROUND, stringBackground);
 
-        Uri uri = getContentResolver().insert(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, contentValues);
+        //doing it in background so not to block UI
+        //or else use.. Uri uri = getContentResolver().insert(MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES, contentValues);
+        AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()){};
+        queryHandler.startInsert(1,null,MustWatchMoviesContract.MovieFavorites.CONTENT_URI_FAVORITES,contentValues);
     }
 
     @Override
@@ -434,4 +443,9 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    //save array list for orientation change
+    @Override
+    public Object onRetainCustomNonConfigurationInstance() {
+        return mArrayVideos;
+    }
 }

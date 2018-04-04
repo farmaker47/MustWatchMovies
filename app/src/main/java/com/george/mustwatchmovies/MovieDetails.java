@@ -436,6 +436,10 @@ public class MovieDetails extends AppCompatActivity implements LoaderManager.Loa
         //implicit intent to watch video either on browser or Youtube app
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(YOUTUBE_BASE_URL_VIDEO + videoKey));
+        //if you want to finish youtube on return
+        intent.putExtra("finish_on_ended", true);
+        //if you want full screen video
+        intent.putExtra("force_fullscreen", true);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         } else {
